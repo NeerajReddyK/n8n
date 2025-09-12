@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id    String    @id @default(uuid())
-  email String
+  email String    @unique
   password  String
 
   workflows  Workflow[] 
@@ -29,8 +29,8 @@ model Workflow {
   nodes         Json
   connections   Json
 
-  userId        String
-  user          User      @relation(fields: [userId], references: [id])
+  email        String
+  user          User      @relation(fields: [email], references: [email])
 
   webhook       Webhook?
 }
