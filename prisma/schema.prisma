@@ -18,6 +18,8 @@ model User {
   id    String    @id @default(uuid())
   email String
   password  String
+
+  workflows  Workflow[] 
 }
 
 model Workflow {
@@ -26,6 +28,11 @@ model Workflow {
   active        Boolean
   nodes         Json
   connections   Json
+
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+
+  webhook       Webhook?
 }
 
 enum MethodType {
@@ -42,6 +49,9 @@ model Webhook {
   path          String
   header        Json
   secret        String
+
+  workflowId    String      @unique 
+  workflow      Workflow    @relation(fields: [workflowId], references: [workflowId])
 }
 
 model Credentials {
