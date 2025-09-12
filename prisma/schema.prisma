@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../dist/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String    @id @default(uuid())
+  email String
+  password  String
+}
+
+model Workflow {
+  workflowId    String    @id   @default(uuid())
+  title         String
+  active        Boolean
+  nodes         Json
+  connections   Json
+}
+
+enum MethodType {
+  POST
+  GET
+  PUT
+  DELETE
+}
+
+model Webhook {
+  webhookId     String     @id    @default(uuid())
+  title         String
+  method        MethodType
+  path          String
+  header        Json
+  secret        String
+}
+
+model Credentials {
+  credentialId    String    @id   @default(uuid())
+  title           String
+  platform        String
+  data            Json
+}
+
