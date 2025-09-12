@@ -20,6 +20,7 @@ model User {
   password  String
 
   workflows  Workflow[] 
+  credentials Credentials[]
 }
 
 model Workflow {
@@ -59,5 +60,8 @@ model Credentials {
   title           String
   platform        String
   data            Json
+  createdAt       DateTime  @default(now())
+  email           String    @unique
+  user            User      @relation(fields: [email], references: [email])
 }
 
