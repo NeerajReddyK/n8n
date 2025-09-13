@@ -28,7 +28,7 @@ model Workflow {
   title         String
   active        Boolean
   nodes         Json
-  connections   Json
+  edges         Json
 
   email        String
   user          User      @relation(fields: [email], references: [email])

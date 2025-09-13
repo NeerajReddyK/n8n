@@ -11,6 +11,6 @@ app.use("/api/v1", signRouter);
 app.use("/api/v1/workflow", workflowRouter);
 app.use("/api/v1/credentials", credentialsRouter);
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
 });
