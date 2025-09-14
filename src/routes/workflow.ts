@@ -8,9 +8,7 @@ const router = express.Router();
 router.post("/", authMiddleware, async (req, res) => {
   const email = req.email;
   try {
-    const title = req.body.title;
-    const nodes = req.body.nodes;
-    const connections = req.body.connections;
+    const { title, nodes, edges } = req.body;
     if (!email) {
       res.status(400).json({
         message: "fail, email is not being passed by authMiddleware",
@@ -21,8 +19,8 @@ router.post("/", authMiddleware, async (req, res) => {
       data: {
         title,
         active: true,
-        nodes: {},
-        edges: {},
+        nodes,
+        edges,
         email,
       },
     });
