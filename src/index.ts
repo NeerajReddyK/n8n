@@ -3,6 +3,7 @@ import signRouter from "./routes/sign.js";
 import workflowRouter from "./routes/workflow.js";
 import credentialsRouter from "./routes/credentials.js";
 import telegramRouter from "./triggers/TelegramTrigger.js";
+import oauthRotuer from "./nodes/gmailNode.js";
 import cors from "cors";
 
 const app = express();
@@ -14,6 +15,7 @@ app.use("/api/v1", signRouter);
 app.use("/api/v1/workflow", workflowRouter);
 app.use("/api/v1/credentials", credentialsRouter);
 app.use("/api/v1/triggers", telegramRouter);
+app.use("/auth", oauthRotuer);
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
