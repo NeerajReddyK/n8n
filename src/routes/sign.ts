@@ -35,7 +35,6 @@ router.post("/signin", async (req, res) => {
 
     const token = jwt.sign(email, process.env.JWT_SECRET!);
     if (!token) {
-      console.log("Token is undefined");
       res.status(500).json({
         message: "unable to create token, jwtSecret might be undefined",
       });

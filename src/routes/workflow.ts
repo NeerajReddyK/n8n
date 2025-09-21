@@ -159,13 +159,11 @@ router.put("/update/nodes/:workflowId", authMiddleware, async (req, res) => {
   const email = req.email;
   try {
     const { newNode } = req.body;
-    console.log("logging new node: ", newNode);
     if (!newNode) {
       res.status(404).json({ message: "pass newNode as JSON" });
       return;
     }
     const workflowId = req.params.workflowId;
-    console.log("logging workflowId: ", workflowId);
     if (!workflowId) {
       res.status(404).json({ message: "workflowId required" });
       return;
@@ -208,6 +206,44 @@ router.put("/update/nodes/:workflowId", authMiddleware, async (req, res) => {
   } catch (error) {
     console.error("Unable to udpate backend at the moment", error);
     res.status(500).json({ message: "Error while updating. try in a moment" });
+  }
+});
+
+router.put("/update/edges/:workflowId", authMiddleware, async (req, res) => {
+  const email = req.email;
+  try {
+    const workflowId = req.params.workflowId;
+    const { newEdge } = req.body;
+    if (!workflowId) {
+      res.status(400).json({
+        message: "WorkflowId required. Bad request",
+      });
+      return;
+    }
+    const workflow = await prismaClient.workflow.findFirst({
+      where: { workflowId, email },
+      select: { edges: true },
+    });
+    if (!workflow) {
+      res.status(404).json({ message: "unable to get workflow from database" });
+      return;
+    }
+    const existingEdges = workflow.edges;
+    const updatedEdges = [...existingEdges, newEdge];
+
+    const db = await prismaClient.workflow.update({
+      data: {
+        edges: updatedEdges,
+      },
+      where: {
+        workflowId,
+        email,
+      },
+    });
+
+    res.status(200).json({ message: "success" });
+  } catch (error) {
+    res.status(500).json({ message: "server error: ", error });
   }
 });
 
