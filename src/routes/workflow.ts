@@ -155,4 +155,60 @@ router.put("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+router.put("/update/nodes/:workflowId", authMiddleware, async (req, res) => {
+  const email = req.email;
+  try {
+    const { newNode } = req.body;
+    console.log("logging new node: ", newNode);
+    if (!newNode) {
+      res.status(404).json({ message: "pass newNode as JSON" });
+      return;
+    }
+    const workflowId = req.params.workflowId;
+    console.log("logging workflowId: ", workflowId);
+    if (!workflowId) {
+      res.status(404).json({ message: "workflowId required" });
+      return;
+    }
+
+    const workflow = await prismaClient.workflow.findFirst({
+      where: {
+        workflowId,
+        email,
+      },
+      select: {
+        nodes: true,
+      },
+    });
+
+    if (!workflow) {
+      res
+        .status(500)
+        .json({ message: "Unable to fetch workflow at the moment" });
+      return;
+    }
+    const existingNodes = workflow.nodes;
+    let updatedNodes = [];
+    if (!existingNodes || existingNodes.length == 0) {
+      updatedNodes = [newNode];
+    } else {
+      updatedNodes = [...existingNodes, newNode];
+    }
+
+    const db = await prismaClient.workflow.update({
+      where: {
+        workflowId,
+        email,
+      },
+      data: {
+        nodes: updatedNodes,
+      },
+    });
+    res.status(200).json({ message: "success", nodes: updatedNodes });
+  } catch (error) {
+    console.error("Unable to udpate backend at the moment", error);
+    res.status(500).json({ message: "Error while updating. try in a moment" });
+  }
+});
+
 export default router;
