@@ -4,7 +4,7 @@ import { runWorkflow } from "../nodes/runWorkflow.js";
 
 const router = express.Router();
 
-router.post("/telegram/:webhookId", async (req, res) => {
+router.post("/:webhookId", async (req, res) => {
   try {
     const webhookId = req.params.webhookId;
     const payload = req.body;

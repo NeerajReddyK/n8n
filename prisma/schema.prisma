@@ -64,7 +64,7 @@ model Credentials {
   platform        String
   data            Json
   createdAt       DateTime  @default(now())
-  email           String    @unique
+  email           String    
   user            User      @relation(fields: [email], references: [email])
 }
 
