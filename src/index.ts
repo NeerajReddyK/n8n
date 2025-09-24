@@ -5,6 +5,7 @@ import credentialsRouter from "./routes/credentials.js";
 import telegramRouter from "./triggers/TelegramTrigger.js";
 import validateRouter from "./validate/telegram.js";
 import oauthRotuer from "./nodes/gmailNode.js";
+import testRouter from "./routes/test.js";
 import cors from "cors";
 
 const app = express();
@@ -17,6 +18,7 @@ app.use("/api/v1/workflow", workflowRouter);
 app.use("/api/v1/credentials", credentialsRouter);
 app.use("/api/v1/triggers/telegram", telegramRouter);
 app.use("/api/v1/validate", validateRouter);
+app.use("/api/v1/test", testRouter);
 app.use("/auth", oauthRotuer);
 
 app.listen(PORT, () => {
