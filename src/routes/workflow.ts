@@ -1,6 +1,7 @@
 import express from "express";
 import { authMiddleware } from "../authMiddleware.js";
 import { prismaClient } from "../db/prismaClient.js";
+import type { JsonValue } from "@prisma/client/runtime/library";
 
 const router = express.Router();
 
@@ -244,6 +245,65 @@ router.put("/update/edges/:workflowId", authMiddleware, async (req, res) => {
     res.status(200).json({ message: "success" });
   } catch (error) {
     res.status(500).json({ message: "server error: ", error });
+  }
+});
+
+router.put("/delete/nodes/:workflowId", authMiddleware, async (req, res) => {
+  const email = req.email;
+  const { deleteNode } = req.body;
+  try {
+    const { workflowId } = req.params;
+    if (!workflowId) {
+      res
+        .status(400)
+        .json({ message: "unable to extract workflowId from params" });
+      return;
+    }
+    const workflow = await prismaClient.workflow.findFirst({
+      where: {
+        workflowId,
+        email,
+      },
+      select: { nodes: true },
+    });
+    if (!workflow) {
+      res
+        .status(400)
+        .json({ message: "Unable to get workflow with given workflowId" });
+      return;
+    }
+    interface NodeInteface {
+      id: string;
+      [key: string]: any;
+    }
+    const nodes = (workflow.nodes as NodeInteface[]) ?? [];
+    // now, I need to remove deleteNode from nodes. filter function can be used.
+    const updatedNodes = nodes.filter(
+      (node) => node && node.id !== deleteNode.id
+    );
+
+    const db = await prismaClient.workflow.update({
+      data: {
+        nodes: updatedNodes,
+      },
+      where: {
+        email,
+        workflowId,
+      },
+    });
+    if (!db) {
+      res
+        .status(400)
+        .json({ message: "unable to delete given node at the moment" });
+      return;
+    }
+    res.status(200).json({ message: "success" });
+  } catch (error) {
+    res.status(500).json({
+      message: "unable to delete the node in backend at the moment",
+      error,
+    });
+    console.log("error while deleting node: ", error);
   }
 });
 
